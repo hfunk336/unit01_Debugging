@@ -1,5 +1,5 @@
 /*    C201 - Back-end Programming
- *    Exercise 01_04_01
+ *    Project 01_04_01
 
  *    Tuba Farm Equipment
  *    Variables and functions
@@ -11,10 +11,10 @@
  */
 
 /* global variables tracking status of each form section */
-var acresComplete = true;
-var cropsComplete = true;
-var monthsComplete = true;
-var fuelComplete = true;
+var acresComplete = false;
+var cropsComplete = false;
+var monthsComplete = false;
+var fuelComplete = false;
 
 /* global variables referencing sidebar h2 and p elements */
 var messageHeadElement = document.getElementById("messageHead");
@@ -32,27 +32,90 @@ var acresBox = document.forms[0].acres;
 
 /* verify acres text box entry is a positive number */
 function verifyAcres() {
-   testFormCompleteness();      
+   try{
+      if(acresFieldset.getElementsByTagName("input")[0].value > 0){
+         // checks if the acresFieldset input is greater than 0
+         acresComplete = true;
+         messageElement.innerHTML = "";
+         testFormCompleteness();
+      }else{
+         // if not greater than 0 gives a message
+         throw "Please select an amount of acres above 0.";
+      }
+   }
+   catch(message){
+      acresComplete = false;
+      messageHeadElement.innerHTML = "";
+      messageElement.innerHTML = message;
+   }   
 }
 
 /* verify at least one crops checkbox is checked */
 function verifyCrops() {
-   testFormCompleteness();
+   try{
+      for(var i = 0; i < 7; i++){
+         // runs a loop to check each crops input
+         if(cropsFieldset.getElementsByTagName("input")[i].checked){
+            // if at least one crops input is checked crops complete is true
+            cropsComplete = true;
+            messageElement.innerHTML = "";
+            testFormCompleteness();
+            i = 8;
+         }
+      }
+      if (i === 7){
+         throw "Please select at least one crop.";
+      }
+   }
+   catch(message){
+      cropsComplete = false;
+      messageHeadElement.innerHTML = "";
+      messageElement.innerHTML = message;
+   }
 }
 
 /* verify months text box entry is between 1 and 12 */
 function verifyMonths() {
-   testFormCompleteness();
+   try{
+      if(monthsFieldset.getElementsByTagName("input")[0].value > 0 && monthsFieldset.getElementsByTagName("input")[0].value < 13){
+         // checks to see if the months input is a number 1-12
+         monthsComplete = true;
+         messageElement.innerHTML = "";
+         testFormCompleteness();
+      }else{
+         throw "Please select a positive number of months between 1 and 12.";
+      }
+   }
+   catch(message){
+      monthsComplete = false;
+      messageHeadElement.innerHTML = "";
+      messageElement.innerHTML = message;
+   }
 }
 
 /* verify that a fuel option button is selected */
 function verifyFuel() {
-   testFormCompleteness();
+   try{
+      for(var i = 0; i < 3; i++){
+         // verifies that one of the radio buttons is checked
+         if(fuelFieldset.getElementsByTagName("input")[i].checked){
+            fuelComplete = true;
+            messageElement.innerHTML = "";
+            testFormCompleteness();
+            i = 4;
+         }
+      }
+   }
+   catch(message){
+      fuelComplete = false;
+      messageHeadElement.innerHTML = "";
+      messageElement.innerHTML = message;
+   }
 }
 
 /* check if all four form sections are completed */
 function testFormCompleteness() {
-   if (acresComplete && cropsComplete && monthsComplete && fuelComplete) {
+   if (acresComplete && cropsComplete && monthsComplete && fuelComplete){
       createRecommendation();
    }
 }
@@ -87,7 +150,7 @@ function createRecommendation() {
    if (document.getElementById("E85").checked) { // add suffix to model name based on fuel choice
       messageHeadElement.innerHTML += "E";
    } else if (document.getElementById("biodiesel").checked) {
-      messageHeadElement.innerHTML = "B";
+      messageHeadElement.innerHTML += "B";
    } else {
       messageHeadElement.innerHTML += "D";  
    }
